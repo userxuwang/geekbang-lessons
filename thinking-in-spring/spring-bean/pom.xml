@@ -12,12 +12,12 @@
     <artifactId>spring-bean</artifactId>
     <description>Spring Bean 基础</description>
 
-    <!--Spring Ioc 核心依赖-->
     <dependencies>
-        <dependency>
-            <groupId>org.springframework</groupId>
-            <artifactId>spring-context</artifactId>
-        </dependency>
+    <!--Spring Ioc 核心依赖-->
+<!--        <dependency>-->
+<!--            <groupId>org.springframework</groupId>-->
+<!--            <artifactId>spring-context</artifactId>-->
+<!--        </dependency>-->
 
         <!--复用 <artifactId>ioc-container-overview</artifactId> -->
         <dependency>
