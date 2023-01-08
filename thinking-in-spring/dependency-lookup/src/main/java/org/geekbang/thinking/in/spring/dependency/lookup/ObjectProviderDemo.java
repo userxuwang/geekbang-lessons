@@ -25,7 +25,7 @@ public class ObjectProviderDemo {
     }
 
     @Bean
-    String helloWorld(){
+     String helloWorld(){
         return "Hello,World";
     }
 
