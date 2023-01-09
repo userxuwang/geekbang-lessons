@@ -3,6 +3,9 @@ package org.geekbang.thinking.in.spring.ioc.overview.domain;
 import org.geekbang.thinking.in.spring.ioc.overview.enums.City;
 import org.springframework.core.io.Resource;
 
+import java.util.Arrays;
+import java.util.List;
+
 /**
  * 用户类
  */
@@ -10,18 +13,40 @@ public class User {
     private Long id;
     private String name;
 
-    private City city;
+    private City[] workCities;
 
-    private Resource configFileLocation;
+    private List<City> lifeCities;
 
     @Override
     public String toString() {
         return "User{" +
                 "id=" + id +
                 ", name='" + name + '\'' +
+                ", workCities=" + Arrays.toString(workCities) +
+                ", lifeCities=" + lifeCities +
                 ", city=" + city +
                 ", configFileLocation=" + configFileLocation +
                 '}';
+    }
+
+    public List<City> getLifeCities() {
+        return lifeCities;
+    }
+
+    public void setLifeCities(List<City> lifeCities) {
+        this.lifeCities = lifeCities;
+    }
+
+    private City city;
+
+    private Resource configFileLocation;
+
+    public City[] getWorkCities() {
+        return workCities;
+    }
+
+    public void setWorkCities(City[] workCities) {
+        this.workCities = workCities;
     }
 
     public Resource getConfigFileLocation() {
