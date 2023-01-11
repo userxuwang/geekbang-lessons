@@ -8,6 +8,7 @@ import org.springframework.beans.factory.xml.XmlBeanDefinitionReader;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 import org.springframework.context.annotation.Lazy;
 
+import javax.inject.Inject;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
@@ -44,6 +45,9 @@ public class AnnotationDependencyInjectionResolutionDemo {
     @Autowired
     private Optional<User> userOptional;
 
+    @Inject
+    private User injectUser;
+
     public static void main(String[] args) {
 
         // 创建 BeanFactory 容器
@@ -64,6 +68,9 @@ public class AnnotationDependencyInjectionResolutionDemo {
 
         //期待输出 superUser Bean
         System.out.println("demo.user = " + demo.user);
+        System.out.println();
+
+        System.out.println("demo.injectUser = " + demo.injectUser);
         System.out.println();
 
         //期待输出 superUser user  Bean
