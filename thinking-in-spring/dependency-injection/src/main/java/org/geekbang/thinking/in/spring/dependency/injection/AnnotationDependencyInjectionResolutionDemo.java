@@ -1,17 +1,22 @@
 package org.geekbang.thinking.in.spring.dependency.injection;
 
+import org.geekbang.thinking.in.spring.dependency.injection.annotation.InjectedUser;
+import org.geekbang.thinking.in.spring.dependency.injection.annotation.MyAutowired;
 import org.geekbang.thinking.in.spring.ioc.overview.domain.User;
-import org.springframework.beans.factory.ObjectFactory;
-import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.AutowiredAnnotationBeanPostProcessor;
 import org.springframework.beans.factory.xml.XmlBeanDefinitionReader;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Lazy;
+import org.springframework.core.Ordered;
+import org.springframework.core.annotation.Order;
 
 import javax.inject.Inject;
-import java.util.Map;
-import java.util.Optional;
-import java.util.Set;
+import java.lang.annotation.Annotation;
+import java.util.*;
+
+import static org.springframework.context.annotation.AnnotationConfigUtils.AUTOWIRED_ANNOTATION_PROCESSOR_BEAN_NAME;
 
 /**
  * 注解驱动的依赖注入处理过程
@@ -42,11 +47,58 @@ public class AnnotationDependencyInjectionResolutionDemo {
     @Autowired
     private Map<String, User> users;
 
-    @Autowired
+    @MyAutowired
     private Optional<User> userOptional;
 
     @Inject
     private User injectUser;
+
+    @InjectedUser
+    private User myInjectedUser;
+
+    // TODO: 新老API 兼容 同时注入 原因是同时注入两个 AutowiredAnnotationBeanPostProcessor 对象，换言之在当前上下文中会有两个 AutowiredAnnotationBeanPostProcessor 来进行同时处理 自定义注解，以及新的注解
+    @Bean
+    @Order(Ordered.LOWEST_PRECEDENCE - 3)
+    public static AutowiredAnnotationBeanPostProcessor annotationBeanPostProcessor() {
+        AutowiredAnnotationBeanPostProcessor autowiredAnnotationBeanPostProcessor = new AutowiredAnnotationBeanPostProcessor();
+        autowiredAnnotationBeanPostProcessor.setAutowiredAnnotationType(InjectedUser.class);
+        return autowiredAnnotationBeanPostProcessor;
+    }
+
+    // TODO: 可以查询出所有的信息 bean的名称并不一定要叫这个名字
+    /*@Bean(name = AUTOWIRED_ANNOTATION_PROCESSOR_BEAN_NAME)
+    public static AutowiredAnnotationBeanPostProcessor annotationBeanPostProcessor(){
+        AutowiredAnnotationBeanPostProcessor autowiredAnnotationBeanPostProcessor = new AutowiredAnnotationBeanPostProcessor();
+        // @Autowired + @Inject  + 新注解 @InjectedUser
+        Set<Class<? extends Annotation>> autowiredAnnotationTypes = new LinkedHashSet<>(
+                Arrays.asList(
+                        Autowired.class,
+                        Inject.class,
+                        InjectedUser.class
+                )
+        );
+        autowiredAnnotationBeanPostProcessor.setAutowiredAnnotationTypes(autowiredAnnotationTypes);
+        return autowiredAnnotationBeanPostProcessor;
+    }*/
+
+    //TODO：添加自定义注解 注册到 AutoWiredAnnotationBeanPostProcessor 可以查询出所有信息
+//    @Bean(name = "myInjectedAnnotationBeanPostProcessor")
+//    public static AutowiredAnnotationBeanPostProcessor annotationBeanPostProcessor(){
+//        AutowiredAnnotationBeanPostProcessor autowiredAnnotationBeanPostProcessor = new AutowiredAnnotationBeanPostProcessor();
+//        // 替换原有注解处理，使用新注解 @InjectedUser
+//        autowiredAnnotationBeanPostProcessor.setAutowiredAnnotationType(InjectedUser.class);
+//        return autowiredAnnotationBeanPostProcessor;
+//    }
+
+    // 此方法全部为空
+    /*@Bean(name = "myInjectedAnnotationBeanPostProcessor")
+    public AutowiredAnnotationBeanPostProcessor annotationBeanPostProcessor(){
+        AutowiredAnnotationBeanPostProcessor autowiredAnnotationBeanPostProcessor = new AutowiredAnnotationBeanPostProcessor();
+        // 替换原有注解处理，使用新注解 @InjectedUser
+        autowiredAnnotationBeanPostProcessor.setAutowiredAnnotationType(InjectedUser.class);
+        return autowiredAnnotationBeanPostProcessor;
+    }*/
+
 
     public static void main(String[] args) {
 
@@ -78,7 +130,12 @@ public class AnnotationDependencyInjectionResolutionDemo {
         System.out.println();
 
         //期待输出 superUser user  Bean
+
         System.out.println("demo.userOptional = " + demo.userOptional);
+        System.out.println();
+
+        //期待输出 superUser user  Bean
+        System.out.println("demo.myInjectedUser = " + demo.myInjectedUser);
         System.out.println();
 
 
